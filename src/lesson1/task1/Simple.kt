@@ -34,8 +34,7 @@ fun discriminant(a: Double, b: Double, c: Double) = sqr(b) - 4 * a * c
  *
  * Поиск одного из корней квадратного уравнения
  */
-fun quadraticEquationRoot(a: Double, b: Double, c: Double) =
-    (-b + sqrt(discriminant(a, b, c))) / (2 * a)
+fun quadraticEquationRoot(a: Double, b: Double, c: Double): Double = (-b + sqrt(discriminant(a, b, c))) / (2 * a)
 
 /**
  * Пример
@@ -76,7 +75,7 @@ fun seconds(hours: Int, minutes: Int, seconds: Int): Int =
  * 1 сажень = 3 аршина = 48 вершков, 1 вершок = 4.445 см.
  */
 fun lengthInMeters(sagenes: Int, arshins: Int, vershoks: Int): Double =
-    sagenes * 48 * 0.04445 + arshins * 16 * 0.04445 + vershoks * 0.04445
+    ((sagenes * 3 + arshins) * 16 + vershoks) * 4.445 / 100
 
 /**
  * Тривиальная (1 балл)
@@ -95,6 +94,7 @@ fun angleInRadian(deg: Int, min: Int, sec: Int): Double =
  */
 fun trackLength(x1: Double, y1: Double, x2: Double, y2: Double): Double =
     sqrt(sqr(x2 - x1) + sqr(y2 - y1))
+
 /**
  * Простая (2 балла)
  *
@@ -102,7 +102,8 @@ fun trackLength(x1: Double, y1: Double, x2: Double, y2: Double): Double =
  * Определить третью цифру справа в этом числе (в данном случае 8).
  */
 fun thirdDigit(number: Int): Int =
-    (number/ 100) % 10
+    (number / 100) % 10
+
 /**
  * Простая (2 балла)
  *
@@ -111,7 +112,8 @@ fun thirdDigit(number: Int): Int =
  * Определите время поезда в пути в минутах (в данном случае 216).
  */
 fun travelMinutes(hoursDepart: Int, minutesDepart: Int, hoursArrive: Int, minutesArrive: Int): Int =
-(hoursArrive-hoursDepart) * 60 + (minutesArrive-minutesDepart)
+    (hoursArrive - hoursDepart) * 60 + (minutesArrive - minutesDepart)
+
 /**
  * Простая (2 балла)
  *
@@ -120,12 +122,13 @@ fun travelMinutes(hoursDepart: Int, minutesDepart: Int, hoursArrive: Int, minute
  * Например, 100 рублей под 10% годовых превратятся в 133.1 рубля
  */
 fun accountInThreeYears(initial: Int, percent: Int): Double =
-initial * (percent * 0.01 + 1).pow(3.0)
+    initial * (percent * 0.01 + 1).pow(3)
+
 /**
  * Простая (2 балла)
  *
  * Пользователь задает целое трехзначное число (например, 478).
  * Необходимо вывести число, полученное из заданного перестановкой цифр в обратном порядке (например, 874).
  */
-fun numberRevert(number: Int): Int =
-    number % 10 * 100 + number / 10 % 10 * 10 + number / 100
+fun numberRevert(number: Int): Int = (number % 10) * 100 + (number % 100 / 10) * 10 + (number / 100)
+
