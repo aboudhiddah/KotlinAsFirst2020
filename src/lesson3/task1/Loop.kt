@@ -114,6 +114,7 @@ fun minDivisor(n: Int): Int {
         if (n % i == 0) return i
     }
     return n
+
 }
 
 /**
