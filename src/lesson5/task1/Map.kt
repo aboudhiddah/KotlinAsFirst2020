@@ -291,7 +291,6 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
             nop = Pair(rem[j], i)
             break
 
-
         }
         if (rem[j] == -1) rem[j] = i
         if (rem[number - j] == -1) continue
