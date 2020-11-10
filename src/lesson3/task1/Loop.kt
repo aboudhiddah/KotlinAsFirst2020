@@ -3,6 +3,8 @@
 package lesson3.task1
 
 import kotlin.math.sqrt
+import lesson1.task1.discriminant
+import kotlin.math.*
 
 // Урок 3: циклы
 // Максимальное количество баллов = 9
@@ -36,7 +38,6 @@ fun isPrime(n: Int): Boolean {
     }
     return true
 }
-
 /**
  * Пример
  *
@@ -123,7 +124,6 @@ fun minDivisor(n: Int): Int {
  * Для заданного числа n > 1 найти максимальный делитель, меньший n
  */
 fun maxDivisor(n: Int): Int = TODO()
-
 /**
  * Простая (2 балла)
  *
@@ -229,7 +229,19 @@ fun cos(x: Double, eps: Double): Double = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun squareSequenceDigit(n: Int): Int = TODO()
+fun toReturn(cal: Int, n: Int, par: Int): Int =
+    if (cal == n) par % 10
+    else (par / 10.0.pow(cal - n) % 10).toInt()
+
+fun squareSequenceDigit(n: Int): Int {
+    var cal = 0
+    var sqa = 0
+    do {
+        sqa++
+        cal += digitNumber(sqa * sqa)
+    } while (cal < n)
+    return toReturn(cal, n, sqa * sqa)
+}
 
 /**
  * Сложная (5 баллов)
@@ -240,4 +252,15 @@ fun squareSequenceDigit(n: Int): Int = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun fibSequenceDigit(n: Int): Int = TODO()
+fun fibSequenceDigit(n: Int): Int {
+    if (n < 3) return 1
+    var a = 1
+    var b = 1
+    var cal = 2
+    do {
+        a = b.also { b += a}
+        cal += digitNumber(b)
+    } while (cal < n)
+    return toReturn(cal, n, b)
+
+}
