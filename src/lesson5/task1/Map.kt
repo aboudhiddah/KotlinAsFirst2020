@@ -277,7 +277,29 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
  *   findSumOfTwo(listOf(1, 2, 3), 4) -> Pair(0, 2)
  *   findSumOfTwo(listOf(1, 2, 3), 6) -> Pair(-1, -1)
  */
-fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> = TODO()
+fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
+    var nop = (-1 to -1)
+    val rem = MutableList(number) { -1 }
+
+    for ((i, j) in list.withIndex()) {
+        if (j > number) continue
+        if (j * 2 == number) {
+            if (rem[j] == -1) {
+                rem[j] = i
+                continue
+            }
+            nop = Pair(rem[j], i)
+            break
+
+
+        }
+        if (rem[j] == -1) rem[j] = i
+        if (rem[number - j] == -1) continue
+        nop = Pair(rem[number - j], rem[j])
+        break
+    }
+    return nop
+}
 
 /**
  * Очень сложная (8 баллов)
@@ -300,4 +322,28 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> = TODO()
  *     450
  *   ) -> emptySet()
  */
-fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> = TODO()
+fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> {
+    val list = treasures.toList()
+    val d = mutableListOf<MutableList<Pair<Int, MutableSet<String>>>>()
+    for (i in 0..treasures.size) {
+        d.add(mutableListOf())
+        for (j in 0..capacity) d[i].add(Pair(0, mutableSetOf()))
+    }
+    for (count in 1..treasures.size)
+        for (weight in 0..capacity) {
+            val w = list[count - 1].second.first
+            val price = list[count - 1].second.second
+            val treas = list[count - 1].first
+            when {
+                w > weight -> d[count][weight] = d[count - 1][weight]
+                d[count - 1][weight - w].first + price > d[count - 1][weight].first ->
+                    d[count][weight] = Pair(
+                        d[count - 1][weight - w].first + price,
+                        (d[count - 1][weight - w].second + treas).toMutableSet()
+                    )
+                else -> d[count][weight] = d[count - 1][weight]
+            }
+        }
+    return d[treasures.size][capacity].second
+
+}
