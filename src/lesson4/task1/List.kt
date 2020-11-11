@@ -241,7 +241,22 @@ fun decimalFromString(str: String, base: Int): Int = TODO()
  * 90 = XC, 100 = C, 400 = CD, 500 = D, 900 = CM, 1000 = M.
  * Например: 23 = XXIII, 44 = XLIV, 100 = C
  */
-fun roman(n: Int): String = TODO()
+fun roman(n: Int): String {
+    var n = n
+    val transfer = mapOf(
+        1000 to "M", 900 to "CM", 500 to "D", 400 to "CD", 100 to "C", 90 to "XC",
+        50 to "L", 40 to "XL", 10 to "X", 9 to "IX", 5 to "V", 4 to "IV", 1 to "I"
+    )
+    val result = StringBuilder()
+
+    for ((a, b) in transfer) {
+        while (n >= a) {
+            result.append(b)
+            n -= a
+        }
+    }
+    return result.toString()
+}
 
 /**
  * Очень сложная (7 баллов)
@@ -250,4 +265,50 @@ fun roman(n: Int): String = TODO()
  * Например, 375 = "триста семьдесят пять",
  * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
  */
-fun russian(n: Int): String = TODO()
+val digits = listOf(
+    "один", "два", "три",
+    "четыре", "пять", "шесть",
+    "семь", "восемь", "девять"
+)
+
+val numb11To19 = listOf(
+    "одиннадцать", "двенадцать", "тринадцать",
+    "четырнадцать", "пятнадцать", "шестнадцать",
+    "семнадцать", "восемнадцать", "девятнадцать"
+)
+
+val decades = listOf(
+    "десять", "двадцать", "тридцать",
+    "сорок", "пятьдесят", "шестьдесят",
+    "семьдесят", "восемьдесят", "девяносто"
+)
+
+val hundreds = listOf(
+    "сто", "двести", "триста",
+    "четыреста", "пятьсот", "шестьсот",
+    "семьсот", "восемьсот", "девятьсот"
+)
+
+fun threeFigures(n: Int, isThousands: Boolean = false): List<String> {
+    val list = mutableListOf<String>()
+    if (n % 100 in 10..19) {
+        list.add(
+            index = 0,
+            element = if (n % 100 == 10) decades[0] else numb11To19[n % 10 - 1]
+        )
+        if (isThousands) list.add("тысяч")
+    } else {
+        if (n % 10 != 0) when (n % 10) {
+            1 -> list.add(0, if (isThousands) "одна тысяча" else digits[0])
+            2 -> list.add(0, if (isThousands) "две тысячи" else digits[1])
+            in 3..4 -> list.add(0, if (isThousands) "${digits[n % 10 - 1]} тысячи" else digits[n % 10 - 1])
+            else -> list.add(0, if (isThousands) "${digits[n % 10 - 1]} тысяч" else digits[n % 10 - 1])
+        } else if (isThousands && (n != 0)) list.add("тысяч")
+        if (n % 100 / 10 != 0) list.add(0, decades[n % 100 / 10 - 1])
+    }
+    if (n / 100 != 0) list.add(0, hundreds[n / 100 - 1])
+    return list
+}
+
+fun russian(n: Int): String = (threeFigures(n / 1000, true) +
+        threeFigures(n % 1000)).joinToString(separator = " ")
