@@ -124,10 +124,12 @@ fun whichRookThreatens(
     rookX1: Int, rookY1: Int,
     rookX2: Int, rookY2: Int
 ): Int = when {
-    ((kingX == rookX1) && (kingX == rookX2) || (kingY == rookY1) && (kingY == rookY2) ||
-            (kingX == rookX1) && (kingY == rookY2) || (kingX == rookX2) && (kingY == rookY1)) -> 3
-    ((kingX == rookX1) || (kingY == rookY1)) -> 1
-    ((kingX == rookX2) || (kingY == rookY2)) -> 2
+    ((kingX == rookX1) && (kingX == rookX2)) ||
+            ((kingY == rookY1) && (kingY == rookY2)) ||
+            ((kingX == rookX1) && (kingY == rookY2)) ||
+            ((kingY == rookY1) && (kingX == rookX2)) -> 3
+    (kingX == rookX1) || (kingY == rookY1) -> 1
+    (kingX == rookX2) || (kingY == rookY2) -> 2
     else -> 0
 }
 
@@ -145,11 +147,13 @@ fun rookOrBishopThreatens(
     kingX: Int, kingY: Int,
     rookX: Int, rookY: Int,
     bishopX: Int, bishopY: Int
-): Int = when {
-    (abs(bishopX - kingX) == abs(bishopY - kingY)) && ((kingX == rookX) || (kingY == rookY)) -> 3
-    (abs(bishopX - kingX) == abs(bishopY - kingY)) -> 2
-    ((kingX == rookX) || (kingY == rookY)) -> 1
-    else -> 0
+): Int {
+    if ((kingX == rookX) || (kingY == rookY)) {
+        if (abs(kingX - bishopX) == abs(kingY - bishopY)) return 3
+        return 1
+    }
+    return if (abs(kingX - bishopX) == abs(kingY - bishopY)) 2
+    else 0
 }
 
 /**
@@ -181,8 +185,6 @@ fun triangleKind(a: Double, b: Double, c: Double): Int {
         else -> 0
     }
 
-
-
 }
 
 /**
@@ -193,14 +195,12 @@ fun triangleKind(a: Double, b: Double, c: Double): Int {
  * Найти длину пересечения отрезков AB и CD.
  * Если пересечения нет, вернуть -1.
  */
-fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int =
-    when {
-        b < c || a > d -> -1
-        (a > c && b < d) -> b - a
-        (a < c && b > d) -> d - c
-        (a < c && b < d) -> b - c
-        (a > c && b > d) -> d - a
-        else -> 0
-    }
 
+fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int = when {
+    b < c || a > d -> -1
+    (a <= c && b >= d) || (a >= c && b <= d) -> min(b - a, d - c)
+    b in (c + 1) until d -> b - c
+    a in (c + 1) until d -> d - a
+    else -> 0
+}
 
