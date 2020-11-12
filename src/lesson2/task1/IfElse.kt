@@ -201,7 +201,6 @@ fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int = when {
     (a <= c && b >= d) || (a >= c && b <= d) -> min(b - a, d - c)
     b in (c + 1) until d -> b - c
     a in (c + 1) until d -> d - a
-
     else -> 0
 }
 
