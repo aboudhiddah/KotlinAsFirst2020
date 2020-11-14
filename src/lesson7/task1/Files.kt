@@ -3,6 +3,7 @@
 package lesson7.task1
 
 import java.io.File
+import kotlin.math.max
 
 // Урок 7: работа с файлами
 // Урок интегральный, поэтому его задачи имеют сильно увеличенную стоимость
@@ -113,9 +114,24 @@ fun sibilants(inputName: String, outputName: String) {
  *
  */
 fun centerFile(inputName: String, outputName: String) {
-    TODO()
-}
+    val type = mutableListOf<String>()
+    var max1 = 0
+    for (struct in File(inputName).readLines()) {
+        val secStrut = struct.trim()
+        type.add(secStrut)
+        max1 = max(max1, secStrut.length)
+    }
+    File(outputName).bufferedWriter().use {
+        for (struct in type) {
+            val curLen = struct.length
+            val result = String.format("%${(max1 + curLen) / 2}s", struct) + "\n"
+            it.write(result)
+            println(result)
+        }
 
+    }
+
+}
 /**
  * Сложная (20 баллов)
  *
@@ -327,6 +343,7 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
     textList.add("</body></html>")
     val res = textList.joinToString(separator = "")
     File(outputName).bufferedWriter().use { it.write(res) }
+
 }
 /**
  * Сложная (23 балла)
