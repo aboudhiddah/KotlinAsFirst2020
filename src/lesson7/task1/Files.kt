@@ -282,9 +282,52 @@ Suspendisse ~~et elit in enim tempus iaculis~~.
  * (Отступы и переносы строк в примере добавлены для наглядности, при решении задачи их реализовывать не обязательно)
  */
 fun markdownToHtmlSimple(inputName: String, outputName: String) {
-    TODO()
+    val type = File(inputName).readText().replace("\r", "").trim('\n')
+    val textList = mutableListOf("<html><body>", "<p>")
+    val kart = mutableMapOf("**" to null, "*" to null, "~~" to null, "\n\n" to 1)
+    var indexOfBeginString = 0
+    var i = 0
+    fun checkMarkToHTML(mark: String, tags: Pair<String, String>): Boolean {
+        if (type[i] == mark[0]) {
+            var di = i
+            if (mark.length == 2) if (di < type.length - 1 && type[di + 1] == mark[1]) di += 1 else return false
+            if (mark == "\n\n") while (di < type.length - 1 && type[di + 1] == '\n') di += 1
+            if (i - indexOfBeginString != 0) textList.add(type.substring(indexOfBeginString, i))
+            i = di
+            indexOfBeginString = i + 1
+            if (kart[mark] == null) {
+                kart[mark] = textList.size
+                textList.add(mark)
+            } else {
+                textList.add(tags.second)
+                textList[kart[mark]!!] = tags.first
+                kart[mark] = null
+                if (mark == "\n\n") {
+                    kart[mark] = textList.size
+                    textList.add("\n\n")
+                }
+            }
+            return true
+        }
+        return false
+    }
+    while (i < type.length) {
+        var flag = checkMarkToHTML("**", "<b>" to "</b>")
+        if (!flag) flag = checkMarkToHTML("*", "<i>" to "</i>")
+        if (!flag) flag = checkMarkToHTML("~~", "<s>" to "</s>")
+        if (!flag) checkMarkToHTML("\n\n", "<p>" to "</p>")
+        i += 1
+    }
+    textList.add(type.substring(indexOfBeginString, i))
+    val lastP = kart["\n\n"]
+    if (lastP != null) {
+        textList[lastP] = "<p>"
+        textList.add("</p>")
+    }
+    textList.add("</body></html>")
+    val res = textList.joinToString(separator = "")
+    File(outputName).bufferedWriter().use { it.write(res) }
 }
-
 /**
  * Сложная (23 балла)
  *
