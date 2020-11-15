@@ -3,7 +3,6 @@
 package lesson3.task1
 
 import kotlin.math.sqrt
-import lesson1.task1.discriminant
 import kotlin.math.*
 
 // Урок 3: циклы
@@ -38,6 +37,7 @@ fun isPrime(n: Int): Boolean {
     }
     return true
 }
+
 /**
  * Пример
  *
@@ -124,6 +124,7 @@ fun minDivisor(n: Int): Int {
  * Для заданного числа n > 1 найти максимальный делитель, меньший n
  */
 fun maxDivisor(n: Int): Int = TODO()
+
 /**
  * Простая (2 балла)
  *
@@ -241,6 +242,7 @@ fun squareSequenceDigit(n: Int): Int {
         cal += digitNumber(sqa * sqa)
     } while (cal < n)
     return toReturn(cal, n, sqa * sqa)
+
 }
 
 /**
@@ -258,9 +260,13 @@ fun fibSequenceDigit(n: Int): Int {
     var b = 1
     var cal = 2
     do {
-        a = b.also { b += a}
+
+        a = b.also { b += a }
+
         cal += digitNumber(b)
+
     } while (cal < n)
+
     return toReturn(cal, n, b)
 
 }
