@@ -123,14 +123,15 @@ fun whichRookThreatens(
     kingX: Int, kingY: Int,
     rookX1: Int, rookY1: Int,
     rookX2: Int, rookY2: Int
-): Int = when {
-    ((kingX == rookX1) && (kingX == rookX2)) ||
-            ((kingY == rookY1) && (kingY == rookY2)) ||
-            ((kingX == rookX1) && (kingY == rookY2)) ||
-            ((kingY == rookY1) && (kingX == rookX2)) -> 3
-    (kingX == rookX1) || (kingY == rookY1) -> 1
-    (kingX == rookX2) || (kingY == rookY2) -> 2
-    else -> 0
+): Int {
+    val ukroz1 = (kingX == rookX1) || (kingY == rookY1)
+    val ukroz2 = (kingX == rookX2) || (kingY == rookY2)
+    return when {
+        ukroz1 && ukroz2 -> 3
+        ukroz1 -> 1
+        ukroz2 -> 2
+        else -> 0
+    }
 }
 
 /**
@@ -165,26 +166,17 @@ fun rookOrBishopThreatens(
  * Если такой треугольник не существует, вернуть -1.
  */
 fun triangleKind(a: Double, b: Double, c: Double): Int {
-    if ((a + b + c - maxOf(a, b, c)) <= maxOf(a, b, c)) return -1
-    val hyb: Double
-    val sid: Double
-    when {
-        c == maxOf(a, b, c) -> {
-            hyb = c * c; sid = (a * a) + (b * b)
-        }
-        a == maxOf(a, b, c) -> {
-            hyb = a * a; sid = (b * b) + (c * c)
-        }
-        else -> {
-            hyb = b * b; sid = (a * a) + (c * c)
+    if ((a + b > c) && (c + b > a) && (a + c > b)) {
+        val i = (c * c + b * b - a * a) / (2.0 * c * b)
+        val j = (a * a + c * c - b * b) / (2.0 * a * c)
+        val o = (a * a + b * b - c * c) / (2.0 * a * b)
+        return when {
+            (i > 0) && (j > 0) && (o > 0) -> 0
+            (i == 0.0) || (j == 0.0) || (o == 0.0) -> 1
+            else -> 2
         }
     }
-    return when {
-        hyb == sid -> 1
-        hyb > sid -> 2
-        else -> 0
-    }
-
+    return -1
 }
 
 /**
