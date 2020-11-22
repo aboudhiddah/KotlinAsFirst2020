@@ -33,7 +33,6 @@ fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean =
     (x1 == x2) || (y1 == y2) || (abs(x1 - x2) == abs(y1 - y2))
 
 
-
 /**
  * Простая (2 балла)
  *
@@ -56,8 +55,7 @@ fun daysInMonth(month: Int, year: Int): Int =
  * Вернуть true, если утверждение верно
  */
 fun circleInside(
-x1: Double, y1: Double, r1: Double,
-x2: Double, y2: Double, r2: Double
+    x1: Double, y1: Double, r1: Double, x2: Double, y2: Double, r2: Double
 ): Boolean = sqrt(sqr(x1 - x2) + sqr(y1 - y2)) + r1 <= r2
 
 /**
