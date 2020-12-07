@@ -6,27 +6,27 @@ package lesson8.task1
  * Точка (гекс) на шестиугольной сетке.
  * Координаты заданы как в примере (первая цифра - y, вторая цифра - x)
  *
- *       60  61  62  63  64  65
- *     50  51  52  53  54  55  56
- *   40  41  42  43  44  45  46  47
- * 30  31  32  33  34  35  36  37  38
- *   21  22  23  24  25  26  27  28
- *     12  13  14  15  16  17  18
- *       03  04  05  06  07  08
+ * 60 61 62 63 64 65
+ * 50 51 52 53 54 55 56
+ * 40 41 42 43 44 45 46 47
+ * 30 31 32 33 34 35 36 37 38
+ * 21 22 23 24 25 26 27 28
+ * 12 13 14 15 16 17 18
+ * 03 04 05 06 07 08
  *
  * В примерах к задачам используются те же обозначения точек,
- * к примеру, 16 соответствует HexPoint(x = 6, y = 1), а 41 -- HexPoint(x = 1, y = 4).
+ * к примеру, 16 соответствует HexPoint(x = 6, y = 1), а 41 — HexPoint(x = 1, y = 4).
  *
  * В задачах, работающих с шестиугольниками на сетке, считать, что они имеют
  * _плоскую_ ориентацию:
- *  __
- * /  \
+ * __
+ * / \
  * \__/
  *
  * со сторонами, параллельными координатным осям сетки.
  *
  * Более подробно про шестиугольные системы координат можно почитать по следующей ссылке:
- *   https://www.redblobgames.com/grids/hexagons/
+ * https://www.redblobgames.com/grids/hexagons/
  */
 data class HexPoint(val x: Int, val y: Int) {
     /**
@@ -88,7 +88,7 @@ class HexSegment(val begin: HexPoint, val end: HexPoint) {
      *
      * Вернуть направление отрезка (см. описание класса Direction ниже).
      * Для "правильного" отрезка выбирается одно из первых шести направлений,
-     * для "неправильного" -- INCORRECT.
+     * для "неправильного" — INCORRECT.
      */
     fun direction(): Direction = TODO()
 
@@ -105,13 +105,13 @@ class HexSegment(val begin: HexPoint, val end: HexPoint) {
  * Если нет, его направление считается INCORRECT
  */
 enum class Direction {
-    RIGHT,      // слева направо, например 30 -> 34
-    UP_RIGHT,   // вверх-вправо, например 32 -> 62
-    UP_LEFT,    // вверх-влево, например 25 -> 61
-    LEFT,       // справа налево, например 34 -> 30
-    DOWN_LEFT,  // вниз-влево, например 62 -> 32
+    RIGHT, // слева направо, например 30 -> 34
+    UP_RIGHT, // вверх-вправо, например 32 -> 62
+    UP_LEFT, // вверх-влево, например 25 -> 61
+    LEFT, // справа налево, например 34 -> 30
+    DOWN_LEFT, // вниз-влево, например 62 -> 32
     DOWN_RIGHT, // вниз-вправо, например 61 -> 25
-    INCORRECT;  // отрезок имеет изгиб, например 30 -> 55 (изгиб в точке 35)
+    INCORRECT; // отрезок имеет изгиб, например 30 -> 55 (изгиб в точке 35)
 
     /**
      * Простая (2 балла)
@@ -127,7 +127,9 @@ enum class Direction {
      * Вернуть направление, повёрнутое относительно
      * заданного на 60 градусов против часовой стрелки.
      *
-     * Например, для RIGHT это UP_RIGHT, для UP_LEFT это LEFT, для LEFT это DOWN_LEFT.
+     * Например, для
+
+    RIGHT это UP_RIGHT, для UP_LEFT это LEFT, для LEFT это DOWN_LEFT.
      * Для направления INCORRECT бросить исключение IllegalArgumentException.
      * При решении этой задачи попробуйте обойтись без перечисления всех семи вариантов.
      */
@@ -151,9 +153,9 @@ enum class Direction {
  * Для отрицательного расстояния сдвинуть точку в противоположном направлении на -distance.
  *
  * Примеры:
- * 30, direction = RIGHT, distance = 3 --> 33
- * 35, direction = UP_LEFT, distance = 2 --> 53
- * 45, direction = DOWN_LEFT, distance = 4 --> 05
+ * 30, direction = RIGHT, distance = 3 —> 33
+ * 35, direction = UP_LEFT, distance = 2 —> 53
+ * 45, direction = DOWN_LEFT, distance = 4 —> 05
  */
 fun HexPoint.move(direction: Direction, distance: Int): HexPoint = TODO()
 
@@ -166,14 +168,14 @@ fun HexPoint.move(direction: Direction, distance: Int): HexPoint = TODO()
  * Если кратчайших путей существует несколько, вернуть любой из них.
  *
  * Пример (для координатной сетки из примера в начале файла):
- *   pathBetweenHexes(HexPoint(y = 2, x = 2), HexPoint(y = 5, x = 3)) ->
- *     listOf(
- *       HexPoint(y = 2, x = 2),
- *       HexPoint(y = 2, x = 3),
- *       HexPoint(y = 3, x = 3),
- *       HexPoint(y = 4, x = 3),
- *       HexPoint(y = 5, x = 3)
- *     )
+ * pathBetweenHexes(HexPoint(y = 2, x = 2), HexPoint(y = 5, x = 3)) ->
+ * listOf(
+ * HexPoint(y = 2, x = 2),
+ * HexPoint(y = 2, x = 3),
+ * HexPoint(y = 3, x = 3),
+ * HexPoint(y = 4, x = 3),
+ * HexPoint(y = 5, x = 3)
+ * )
  */
 fun pathBetweenHexes(from: HexPoint, to: HexPoint): List<HexPoint> = TODO()
 
@@ -202,9 +204,8 @@ fun hexagonByThreePoints(a: HexPoint, b: HexPoint, c: HexPoint): Hexagon? = TODO
  * Если множество пустое, бросить IllegalArgumentException.
  * Если множество содержит один гекс, вернуть шестиугольник нулевого радиуса с центром в данной точке.
  *
- * Пример: 13, 32, 45, 18 -- шестиугольник радиусом 3 (с центром, например, в 15)
+ * Пример: 13, 32, 45, 18 — шестиугольник радиусом 3 (с центром, например, в 15)
  */
 fun minContainingHexagon(vararg points: HexPoint): Hexagon = TODO()
-
 
 
