@@ -3,7 +3,10 @@
 package lesson9.task2
 
 import lesson9.task1.Matrix
+import lesson9.task1.copy
 import lesson9.task1.createMatrix
+import kotlin.math.min
+import kotlin.math.abs
 
 // Все задачи в этом файле требуют наличия реализации интерфейса "Матрица" в Matrix.kt
 
@@ -49,7 +52,7 @@ operator fun Matrix<Int>.plus(other: Matrix<Int>): Matrix<Int> {
 }
 
 /**
- * Сложная (5 баллов)
+ * Сложная
  *
  * Заполнить матрицу заданной высоты height и ширины width
  * натуральными числами от 1 до m*n по спирали,
@@ -60,10 +63,41 @@ operator fun Matrix<Int>.plus(other: Matrix<Int>): Matrix<Int> {
  * 10 11 12  5
  *  9  8  7  6
  */
-fun generateSpiral(height: Int, width: Int): Matrix<Int> = TODO()
+fun generateSpiral(height: Int, width: Int): Matrix<Int> {
+    val moves = listOf(0 to 1, 1 to 0, 0 to -1, -1 to 0) //dRow to dColumn
+    val matrix = createMatrix(height, width, 0)
+    var (i, j) = 0 to 0
+    var (minJ, maxJ) = 0 to width - 1
+    var (minI, maxI) = 1 to height - 1
+    var moveNumber = if (width == 1) 1 else 0
+    for (n in 1..height * width) {
+        matrix[i, j] = n
+        i += moves[moveNumber].first
+        j += moves[moveNumber].second
+        when (moveNumber) {
+            0 -> if (j == maxJ) {
+                moveNumber = 1
+                maxJ -= 1
+            }
+            1 -> if (i == maxI) {
+                moveNumber = 2
+                maxI -= 1
+            }
+            2 -> if (j == minJ) {
+                moveNumber = 3
+                minJ += 1
+            }
+            3 -> if (i == minI) {
+                moveNumber = 0
+                minI += 1
+            }
+        }
+    }
+    return matrix
+}
 
 /**
- * Сложная (5 баллов)
+ * Сложная
  *
  * Заполнить матрицу заданной высоты height и ширины width следующим образом.
  * Элементам, находящимся на периферии (по периметру матрицы), присвоить значение 1;
@@ -76,10 +110,16 @@ fun generateSpiral(height: Int, width: Int): Matrix<Int> = TODO()
  *  1  2  2  2  2  1
  *  1  1  1  1  1  1
  */
-fun generateRectangles(height: Int, width: Int): Matrix<Int> = TODO()
+fun generateRectangles(height: Int, width: Int): Matrix<Int> {
+    val matrix = createMatrix(height, width, 0)
+    for (i in 0 until height)
+        for (j in 0 until width)
+            matrix[i, j] = min(min(i, height - 1 - i), min(j, width - 1 - j)) + 1
+    return matrix
+}
 
 /**
- * Сложная (5 баллов)
+ * Сложная
  *
  * Заполнить матрицу заданной высоты height и ширины width диагональной змейкой:
  * в левый верхний угол 1, во вторую от угла диагональ 2 и 3 сверху вниз, в третью 4-6 сверху вниз и так далее.
@@ -91,10 +131,35 @@ fun generateRectangles(height: Int, width: Int): Matrix<Int> = TODO()
  * 10 13 16 18
  * 14 17 19 20
  */
-fun generateSnake(height: Int, width: Int): Matrix<Int> = TODO()
+fun generateSnake(height: Int, width: Int): Matrix<Int> {
+    val matrix = createMatrix(height, width, 0)
+    var (i, j) = 0 to 0
+    var minJ = 0
+    var (nextI, nextJ) = if (width != 1) 0 to 1 else 1 to 0
+    for (n in 1..height * width) {
+        matrix[i, j] = n
+        when {
+            j == minJ || i == height - 1 -> {
+                if (i == height - 1) minJ += 1
+                j = nextJ
+                i = nextI
+                nextJ += 1
+                if (nextJ > width - 1) {
+                    nextJ = width - 1
+                    nextI += 1
+                }
+            }
+            else -> {
+                i += 1
+                j -= 1
+            }
+        }
+    }
+    return matrix
+}
 
 /**
- * Средняя (3 балла)
+ * Средняя
  *
  * Содержимое квадратной матрицы matrix (с произвольным содержимым) повернуть на 90 градусов по часовой стрелке.
  * Если height != width, бросить IllegalArgumentException.
@@ -104,10 +169,17 @@ fun generateSnake(height: Int, width: Int): Matrix<Int> = TODO()
  * 4 5 6      8 5 2
  * 7 8 9      9 6 3
  */
-fun <E> rotate(matrix: Matrix<E>): Matrix<E> = TODO()
+fun <E> rotate(matrix: Matrix<E>): Matrix<E> {
+    require(matrix.height == matrix.width)
+    val newMatrix = createMatrix(matrix.height, matrix.width, matrix[0, 0])
+    for (i in 0 until matrix.height)
+        for (j in 0 until matrix.width)
+            newMatrix[j, matrix.width - 1 - i] = matrix[i, j]
+    return newMatrix
+}
 
 /**
- * Сложная (5 баллов)
+ * Сложная
  *
  * Проверить, является ли квадратная целочисленная матрица matrix латинским квадратом.
  * Латинским квадратом называется матрица размером n x n,
@@ -119,10 +191,24 @@ fun <E> rotate(matrix: Matrix<E>): Matrix<E> = TODO()
  * 1 2 3
  * 3 1 2
  */
-fun isLatinSquare(matrix: Matrix<Int>): Boolean = TODO()
+fun isLatinSquare(matrix: Matrix<Int>): Boolean {
+    if (matrix.height != matrix.width) return false
+    val setN = (1..matrix.width).toSet()
+    for (i in 0 until matrix.height) {
+        val currentRow = mutableSetOf<Int>()
+        for (j in 0 until matrix.width) currentRow.add(matrix[i, j])
+        if (currentRow != setN) return false
+    }
+    for (j in 0 until matrix.width) {
+        val currentRow = mutableSetOf<Int>()
+        for (i in 0 until matrix.height) currentRow.add(matrix[i, j])
+        if (currentRow != setN) return false
+    }
+    return true
+}
 
 /**
- * Средняя (3 балла)
+ * Средняя
  *
  * В матрице matrix каждый элемент заменить суммой непосредственно примыкающих к нему
  * элементов по вертикали, горизонтали и диагоналям.
@@ -138,10 +224,30 @@ fun isLatinSquare(matrix: Matrix<Int>): Boolean = TODO()
  *
  * 42 ===> 0
  */
-fun sumNeighbours(matrix: Matrix<Int>): Matrix<Int> = TODO()
+fun include(neighbor: Pair<Int, Int>, matrix: Matrix<Int>): Boolean =
+    neighbor.first in 0 until matrix.height && neighbor.second in 0 until matrix.width
+
+fun sumNeighbours(matrix: Matrix<Int>): Matrix<Int> {
+    val newMatrix = createMatrix(matrix.height, matrix.width, matrix[0, 0])
+    val neighborsCord = listOf(
+        -1 to -1, -1 to 0, -1 to 1,
+        0 to 1, 1 to 1,
+        1 to 0, 1 to -1, 0 to -1
+    )
+    for (i in 0 until matrix.height)
+        for (j in 0 until matrix.width) {
+            var currentSum = 0
+            for ((dI, dJ) in neighborsCord) {
+                val neighbor = i + dI to j + dJ
+                if (include(neighbor, matrix)) currentSum += matrix[neighbor.first, neighbor.second]
+            }
+            newMatrix[i, j] = currentSum
+        }
+    return newMatrix
+}
 
 /**
- * Средняя (4 балла)
+ * Средняя
  *
  * Целочисленная матрица matrix состоит из "дырок" (на их месте стоит 0) и "кирпичей" (на их месте стоит 1).
  * Найти в этой матрице все ряды и колонки, целиком состоящие из "дырок".
@@ -155,7 +261,18 @@ fun sumNeighbours(matrix: Matrix<Int>): Matrix<Int> = TODO()
  * 0 0 1 0
  * 0 0 0 0
  */
-fun findHoles(matrix: Matrix<Int>): Holes = TODO()
+fun findHoles(matrix: Matrix<Int>): Holes {
+    val (rows, columns) = mutableListOf<Int>() to mutableListOf<Int>()
+    loopRows@ for (i in 0 until matrix.height) {
+        for (j in 0 until matrix.width) if (matrix[i, j] == 1) continue@loopRows
+        rows.add(i)
+    }
+    loopColumns@ for (j in 0 until matrix.width) {
+        for (i in 0 until matrix.height) if (matrix[i, j] == 1) continue@loopColumns
+        columns.add(j)
+    }
+    return Holes(rows, columns)
+}
 
 /**
  * Класс для описания местонахождения "дырок" в матрице
@@ -163,7 +280,7 @@ fun findHoles(matrix: Matrix<Int>): Holes = TODO()
 data class Holes(val rows: List<Int>, val columns: List<Int>)
 
 /**
- * Средняя (3 балла)
+ * Средняя
  *
  * В целочисленной матрице matrix каждый элемент заменить суммой элементов подматрицы,
  * расположенной в левом верхнем углу матрицы matrix и ограниченной справа-снизу данным элементом.
@@ -176,28 +293,17 @@ data class Holes(val rows: List<Int>, val columns: List<Int>)
  *
  * К примеру, центральный элемент 12 = 1 + 2 + 4 + 5, элемент в левом нижнем углу 12 = 1 + 4 + 7 и так далее.
  */
-fun sumSubMatrix(matrix: Matrix<Int>): Matrix<Int> = TODO()
+fun sumSubMatrix(matrix: Matrix<Int>): Matrix<Int> {
+    for (i in 1 until matrix.height) matrix[i, 0] += matrix[i - 1, 0]
+    for (j in 1 until matrix.width) matrix[0, j] += matrix[0, j - 1]
+    for (j in 1 until matrix.width)
+        for (i in 1 until matrix.height)
+            matrix[i, j] += matrix[i - 1, j] + matrix[i, j - 1] - matrix[i - 1, j - 1]
+    return matrix
+}
 
 /**
- * Простая (2 балла)
- *
- * Инвертировать заданную матрицу.
- * При инвертировании знак каждого элемента матрицы следует заменить на обратный
- */
-operator fun Matrix<Int>.unaryMinus(): Matrix<Int> = TODO(this.toString())
-
-/**
- * Средняя (4 балла)
- *
- * Перемножить две заданные матрицы друг с другом.
- * Матрицы можно умножать, только если ширина первой матрицы совпадает с высотой второй матрицы.
- * В противном случае бросить IllegalArgumentException.
- * Подробно про порядок умножения см. статью Википедии "Умножение матриц".
- */
-operator fun Matrix<Int>.times(other: Matrix<Int>): Matrix<Int> = TODO(this.toString())
-
-/**
- * Сложная (7 баллов)
+ * Сложная
  *
  * Даны мозаичные изображения замочной скважины и ключа. Пройдет ли ключ в скважину?
  * То есть даны две матрицы key и lock, key.height <= lock.height, key.width <= lock.width, состоящие из нулей и единиц.
@@ -216,10 +322,54 @@ operator fun Matrix<Int>.times(other: Matrix<Int>): Matrix<Int> = TODO(this.toSt
  * Вернуть тройку (Triple) -- (да/нет, требуемый сдвиг по высоте, требуемый сдвиг по ширине).
  * Если наложение невозможно, то первый элемент тройки "нет" и сдвиги могут быть любыми.
  */
-fun canOpenLock(key: Matrix<Int>, lock: Matrix<Int>): Triple<Boolean, Int, Int> = TODO()
+fun canOpenLock(key: Matrix<Int>, lock: Matrix<Int>): Triple<Boolean, Int, Int> {
+    for (shiftWidth in 0..(lock.width - key.width))
+        nextShift@ for (shiftHeight in 0..(lock.height - key.height)) {
+            for (i in 0 until key.height)
+                for (j in 0 until key.width)
+                    if (key[i, j] == lock[i + shiftHeight, j + shiftWidth]) continue@nextShift
+            return Triple(true, shiftHeight, shiftWidth)
+        }
+    return Triple(false, 0, 0)
+}
 
 /**
- * Сложная (8 баллов)
+ * Простая
+ *
+ * Инвертировать заданную матрицу.
+ * При инвертировании знак каждого элемента матрицы следует заменить на обратный
+ */
+operator fun Matrix<Int>.unaryMinus(): Matrix<Int> {
+    val matrix = createMatrix(this.height, this.width, this[0, 0])
+    for (i in 0 until this.height)
+        for (j in 0 until this.width)
+            matrix[i, j] = this[i, j] * (-1)
+    return matrix
+}
+
+/**
+ * Средняя
+ *
+ * Перемножить две заданные матрицы друг с другом.
+ * Матрицы можно умножать, только если ширина первой матрицы совпадает с высотой второй матрицы.
+ * В противном случае бросить IllegalArgumentException.
+ * Подробно про порядок умножения см. статью Википедии "Умножение матриц".
+ */
+operator fun Matrix<Int>.times(other: Matrix<Int>): Matrix<Int> {
+    require(this.width == other.height)
+    val m = this.width
+    val res = createMatrix(this.height, other.width, 0)
+    for (i in 0 until res.height)
+        for (j in 0 until res.width) {
+            var sum = 0
+            for (r in 0 until m) sum += this[i, r] * other[r, j]
+            res[i, j] = sum
+        }
+    return res
+}
+
+/**
+ * Сложная
  *
  * В матрице matrix размером 4х4 дана исходная позиция для игры в 15, например
  *  5  7  9  1
@@ -245,10 +395,28 @@ fun canOpenLock(key: Matrix<Int>, lock: Matrix<Int>): Triple<Boolean, Int, Int> 
  * 0  4 13  6
  * 3 10 11  8
  */
-fun fifteenGameMoves(matrix: Matrix<Int>, moves: List<Int>): Matrix<Int> = TODO()
+fun fifteenGameMoves(matrix: Matrix<Int>, moves: List<Int>): Matrix<Int> {
+    val map = mutableMapOf<Int, Pair<Int, Int>>()
+    for (i in 0 until matrix.height)
+        for (j in 0 until matrix.width)
+            map[matrix[i, j]] = i to j
+    for (move in moves) {
+        check(move in 1..15)
+        val cordsMove = map[move]!!
+        val (i, j) = cordsMove
+        val cordsNull = map[0]!!
+        val (iNull, jNull) = cordsNull
+        check(abs(iNull - i) == 1 && jNull == j || abs(jNull - j) == 1 && iNull == i)
+        map[0] = cordsMove
+        map[move] = cordsNull
+        matrix[i, j] = 0
+        matrix[iNull, jNull] = move
+    }
+    return matrix
+}
 
 /**
- * Очень сложная (32 балла)
+ * Очень сложная
  *
  * В матрице matrix размером 4х4 дана исходная позиция для игры в 15, например
  *  5  7  9  2
@@ -286,4 +454,73 @@ fun fifteenGameMoves(matrix: Matrix<Int>, moves: List<Int>): Matrix<Int> = TODO(
  *
  * Перед решением этой задачи НЕОБХОДИМО решить предыдущую
  */
-fun fifteenGameSolution(matrix: Matrix<Int>): List<Int> = TODO()
+
+fun Matrix<Int>.isSolve(): Boolean {
+    var n = 1
+    l@ for (i in 0..3)
+        for (j in 0..3) {
+            if (this[i, j] != n)
+                return false
+            n++
+            if (n == 14) break@l
+        }
+    if (this[3, 1] + this[3, 2] != 14 + 15) return false
+    return true
+}
+
+fun Pair<Int, Int>.isLegal(): Boolean = this.first in 0..3 && this.second in 0..3
+
+fun fifteenGameSolution(matrix: Matrix<Int>): List<Int> {
+    val visited = mutableSetOf(matrix)
+    val queue = mutableListOf(matrix)
+    val lastMatrix = createMatrix(4, 4, -1)
+    val previewMatrix = mutableMapOf(matrix to lastMatrix)
+    val mapNulls = mutableMapOf<Matrix<Int>, Pair<Int, Int>>()
+    val moves = listOf(-1 to 0, 0 to 1, 1 to 0, 0 to -1)
+    l@ for (i in 0..3)
+        for (j in 0..3)
+            if (matrix[i, j] == 0) {
+                mapNulls[matrix] = i to j
+                break@l
+            }
+    var currentMatrix = matrix.copy()
+    while (queue.isNotEmpty()) {
+        currentMatrix = queue[0]
+        if (currentMatrix.isSolve()) break
+        queue.remove(currentMatrix)
+        val (iNull, jNull) = mapNulls[currentMatrix]!!
+        for ((dI, dJ) in moves) {
+            val new = Pair(iNull + dI, jNull + dJ)
+            if (new.isLegal()) {
+                val newMatrix = currentMatrix.copy()
+                newMatrix[iNull, jNull] = currentMatrix[new.first, new.second]
+                newMatrix[new.first, new.second] = 0
+                if (newMatrix !in visited) {
+                    queue.add(newMatrix)
+                    previewMatrix[newMatrix] = currentMatrix
+                    mapNulls[newMatrix] = new
+                    visited += newMatrix
+                }
+            }
+        }
+    }
+    val trajectory = mutableListOf<Matrix<Int>>()
+    var next = currentMatrix
+    while (next != lastMatrix) {
+        trajectory.add(0, next)
+        next = previewMatrix[next]!!
+    }
+    for (i in trajectory) println(i)
+    return listOf(1)
+}
+
+fun main() {
+    val m = createMatrix(4, 4, 0)
+    val data = listOf(
+        listOf(1, 2, 3, 0), listOf(5, 6, 7, 8),
+        listOf(9, 10, 11, 12), listOf(13, 14, 15, 4)
+    )
+    for (i in 0..3)
+        for (j in 0..3) m[i, j] = data[i][j]
+    fifteenGameSolution(m)
+}

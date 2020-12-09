@@ -51,6 +51,7 @@ fun <E> Matrix<E>.copy(): Matrix<E> {
             new[i, j] = this[i, j]
     return new
 }
+
 /**
  * Средняя сложность
  *
