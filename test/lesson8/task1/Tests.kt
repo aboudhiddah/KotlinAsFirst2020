@@ -60,27 +60,6 @@ class Tests {
         assertFalse(approxEquals(expected, actual, delta))
     }
 
-    private fun approxEquals(expected: Point, actual: Point, delta: Double): Boolean =
-        expected.distance(actual) <= delta
-
-    private fun assertApproxEquals(expected: Point, actual: Point, delta: Double = ulp(10.0)) {
-        assertTrue(approxEquals(expected, actual, delta))
-    }
-
-    private fun approxEquals(expected: Segment, actual: Segment, delta: Double): Boolean =
-        expected.begin.distance(actual.begin) <= delta && expected.end.distance(actual.end) <= delta
-
-    private fun assertApproxEquals(expected: Segment, actual: Segment, delta: Double = ulp(10.0)) {
-        assertTrue(approxEquals(expected, actual, delta))
-    }
-
-    private fun approxEquals(expected: Circle, actual: Circle, delta: Double): Boolean =
-        expected.center.distance(actual.center) <= delta && abs(expected.radius - actual.radius) <= delta
-
-    private fun assertApproxEquals(expected: Circle, actual: Circle, delta: Double = ulp(10.0)) {
-        assertTrue(approxEquals(expected, actual, delta))
-    }
-
     @Test
     @Tag("Example")
     fun lineEquals() {
@@ -130,7 +109,7 @@ class Tests {
     }
 
     @Test
-    @Tag("2")
+    @Tag("Easy")
     fun circleDistance() {
         assertEquals(0.0, Circle(Point(0.0, 0.0), 1.0).distance(Circle(Point(1.0, 0.0), 1.0)), 1e-5)
         assertEquals(0.0, Circle(Point(0.0, 0.0), 1.0).distance(Circle(Point(0.0, 2.0), 1.0)), 1e-5)
@@ -139,7 +118,7 @@ class Tests {
     }
 
     @Test
-    @Tag("1")
+    @Tag("Trivial")
     fun circleContains() {
         val center = Point(1.0, 2.0)
         assertTrue(Circle(center, 1.0).contains(center))
@@ -148,7 +127,7 @@ class Tests {
     }
 
     @Test
-    @Tag("3")
+    @Tag("Normal")
     fun diameter() {
         val p1 = Point(0.0, 0.0)
         val p2 = Point(1.0, 4.0)
@@ -156,49 +135,43 @@ class Tests {
         val p4 = Point(3.0, -1.0)
         val p5 = Point(-3.0, -2.0)
         val p6 = Point(0.0, 5.0)
-        assertApproxEquals(Segment(p5, p6), diameter(p1, p2, p3, p4, p5, p6))
-        assertApproxEquals(Segment(p4, p6), diameter(p1, p2, p3, p4, p6))
-        assertApproxEquals(Segment(p3, p4), diameter(p1, p2, p3, p4))
-        assertApproxEquals(Segment(p2, p4), diameter(p1, p2, p4))
-        assertApproxEquals(Segment(p1, p4), diameter(p1, p4))
+        assertEquals(Segment(p5, p6), diameter(p1, p2, p3, p4, p5, p6))
+        assertEquals(Segment(p4, p6), diameter(p1, p2, p3, p4, p6))
+        assertEquals(Segment(p3, p4), diameter(p1, p2, p3, p4))
+        assertEquals(Segment(p2, p4), diameter(p1, p2, p4))
+        assertEquals(Segment(p1, p4), diameter(p1, p4))
     }
 
     @Test
-    @Tag("2")
+    @Tag("Easy")
     fun circleByDiameter() {
-        assertApproxEquals(Circle(Point(0.0, 1.0), 1.0), circleByDiameter(Segment(Point(0.0, 0.0), Point(0.0, 2.0))))
-        assertApproxEquals(Circle(Point(2.0, 1.5), 2.5), circleByDiameter(Segment(Point(4.0, 0.0), Point(0.0, 3.0))))
+        assertEquals(Circle(Point(0.0, 1.0), 1.0), circleByDiameter(Segment(Point(0.0, 0.0), Point(0.0, 2.0))))
+        assertEquals(Circle(Point(2.0, 1.5), 2.5), circleByDiameter(Segment(Point(4.0, 0.0), Point(0.0, 3.0))))
     }
 
     @Test
-    @Tag("3")
+    @Tag("Normal")
     fun crossPoint() {
-        assertApproxEquals(
-            Point(2.0, 3.0),
-            Line(Point(2.0, 0.0), PI / 2).crossPoint(
-                Line(Point(0.0, 3.0), 0.0)
-            ),
-            1e-5
+        assertTrue(
+            Point(2.0, 3.0).distance(
+                Line(Point(2.0, 0.0), PI / 2).crossPoint(
+                    Line(Point(0.0, 3.0), 0.0)
+                )
+            ) < 1e-5
         )
-        assertApproxEquals(
-            Point(2.0, 2.0),
-            Line(Point(0.0, 0.0), PI / 4).crossPoint(
-                Line(Point(0.0, 4.0), 3 * PI / 4)
-            ),
-            1e-5
+        assertTrue(
+            Point(2.0, 2.0).distance(
+                Line(Point(0.0, 0.0), PI / 4).crossPoint(
+                    Line(Point(0.0, 4.0), 3 * PI / 4)
+                )
+            ) < 1e-5
         )
-
         val p = Point(1.0, 3.0)
-
-        assertApproxEquals(
-            p,
-            Line(p, 1.0).crossPoint(Line(p, 2.0)),
-            1e-5
-        )
+        assertTrue(p.distance(Line(p, 1.0).crossPoint(Line(p, 2.0))) < 1e-5)
     }
 
     @Test
-    @Tag("3")
+    @Tag("Normal")
     fun lineBySegment() {
         assertApproxEquals(Line(Point(0.0, 0.0), 0.0), lineBySegment(Segment(Point(0.0, 0.0), Point(7.0, 0.0))))
         assertApproxEquals(Line(Point(0.0, 0.0), PI / 2), lineBySegment(Segment(Point(0.0, 0.0), Point(0.0, 8.0))))
@@ -206,21 +179,21 @@ class Tests {
     }
 
     @Test
-    @Tag("3")
+    @Tag("Normal")
     fun lineByPoint() {
         assertApproxEquals(Line(Point(0.0, 0.0), PI / 2), lineByPoints(Point(0.0, 0.0), Point(0.0, 2.0)))
         assertApproxEquals(Line(Point(1.0, 1.0), PI / 4), lineByPoints(Point(1.0, 1.0), Point(3.0, 3.0)))
     }
 
     @Test
-    @Tag("5")
+    @Tag("Hard")
     fun bisectorByPoints() {
         assertApproxEquals(Line(Point(2.0, 0.0), PI / 2), bisectorByPoints(Point(0.0, 0.0), Point(4.0, 0.0)))
         assertApproxEquals(Line(Point(1.0, 2.0), 0.0), bisectorByPoints(Point(1.0, 5.0), Point(1.0, -1.0)))
     }
 
     @Test
-    @Tag("3")
+    @Tag("Normal")
     fun findNearestCirclePair() {
         val c1 = Circle(Point(0.0, 0.0), 1.0)
         val c2 = Circle(Point(3.0, 0.0), 5.0)
@@ -233,15 +206,15 @@ class Tests {
     }
 
     @Test
-    @Tag("5")
+    @Tag("Hard")
     fun circleByThreePoints() {
-        val actual = circleByThreePoints(Point(5.0, 0.0), Point(3.0, 4.0), Point(0.0, -5.0))
-        val expected = Circle(Point(0.0, 0.0), 5.0)
-        assertApproxEquals(expected, actual, 1e-5)
+        val result = circleByThreePoints(Point(5.0, 0.0), Point(3.0, 4.0), Point(0.0, -5.0))
+        assertTrue(result.center.distance(Point(0.0, 0.0)) < 1e-5)
+        assertEquals(5.0, result.radius, 1e-5)
     }
 
     @Test
-    @Tag("10")
+    @Tag("Impossible")
     fun minContainingCircle() {
         val p1 = Point(0.0, 0.0)
         val p2 = Point(1.0, 4.0)
