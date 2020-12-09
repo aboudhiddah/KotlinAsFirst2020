@@ -2,9 +2,6 @@
 
 package lesson9.task1
 
-// Урок 9: проектирование классов
-// Максимальное количество баллов = 40 (без очень трудных задач = 15)
-
 /**
  * Ячейка матрицы: row = ряд, column = колонка
  */
@@ -35,41 +32,70 @@ interface Matrix<E> {
     operator fun set(row: Int, column: Int, value: E)
 
     operator fun set(cell: Cell, value: E)
+
 }
 
 /**
- * Простая (2 балла)
+ * Простая
  *
  * Метод для создания матрицы, должен вернуть РЕАЛИЗАЦИЮ Matrix<E>.
  * height = высота, width = ширина, e = чем заполнить элементы.
  * Бросить исключение IllegalArgumentException, если height или width <= 0.
  */
-fun <E> createMatrix(height: Int, width: Int, e: E): Matrix<E> = TODO()
+fun <E> createMatrix(height: Int, width: Int, e: E): Matrix<E> = MatrixImpl(height, width, e)
 
+fun <E> Matrix<E>.copy(): Matrix<E> {
+    val new = createMatrix(this.height, this.width, this[0, 0])
+    for (i in 0 until this.height)
+        for (j in 0 until this.height)
+            new[i, j] = this[i, j]
+    return new
+}
 /**
- * Средняя сложность (считается двумя задачами в 3 балла каждая)
+ * Средняя сложность
  *
  * Реализация интерфейса "матрица"
  */
-class MatrixImpl<E> : Matrix<E> {
-    override val height: Int = TODO()
+class MatrixImpl<E>(override val height: Int, override val width: Int, e: E) : Matrix<E> {
+    private val dataMatrix = List(height) { MutableList(width) { e } }
+    private var maxValueLength = e.toString().length
 
-    override val width: Int = TODO()
+    init {
+        require(height > 0 && width > 0)
+    }
 
-    override fun get(row: Int, column: Int): E = TODO()
+    private fun checkIn(row: Int, column: Int): Boolean = row in 0 until height && column in 0 until width
+    override fun get(row: Int, column: Int): E =
+        if (checkIn(row, column)) dataMatrix[row][column] else throw IllegalArgumentException()
 
-    override fun get(cell: Cell): E = TODO()
+    override fun get(cell: Cell): E = get(cell.row, cell.column)
 
     override fun set(row: Int, column: Int, value: E) {
-        TODO()
+        require(checkIn(row, column))
+        dataMatrix[row][column] = value
+        val len = value.toString().length
+        if (maxValueLength < len) maxValueLength = len
     }
 
-    override fun set(cell: Cell, value: E) {
-        TODO()
-    }
+    override fun set(cell: Cell, value: E) = set(cell.row, cell.column, value)
 
-    override fun equals(other: Any?) = TODO()
+    override fun equals(other: Any?) = other is MatrixImpl<*> &&
+            height == other.height &&
+            width == other.width &&
+            dataMatrix == other.dataMatrix
 
-    override fun toString(): String = TODO()
+    override fun toString(): String =
+        dataMatrix.joinToString(
+            prefix = "{Matrix h=${height}, w=${width}:\n",
+            separator = ",\n",
+            postfix = "}"
+        ) {
+            it.joinToString(
+                prefix = " [",
+                separator = ", ",
+                postfix = "]"
+            ) { it2 -> String.format("%${maxValueLength}s", it2) }
+        }
+
+    override fun hashCode() = dataMatrix.hashCode()
 }
-
