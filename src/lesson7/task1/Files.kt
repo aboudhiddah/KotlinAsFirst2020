@@ -325,6 +325,7 @@ Suspendisse <s>et elit in enim tempus iaculis</s>.
  *
  * (Отступы и переносы строк в примере добавлены для наглядности, при решении задачи их реализовывать не обязательно)
  */
+
 fun markdownToHtmlSimple(inputName: String, outputName: String) {
     val type =
         File(inputName).readText().replace("\r", "")
@@ -375,6 +376,7 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
     File(outputName).bufferedWriter().use { it.write(res) }
 
 }
+
 
 /**
  * Сложная (23 балла)
