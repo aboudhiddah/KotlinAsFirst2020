@@ -162,13 +162,13 @@ fun centerFile(inputName: String, outputName: String) {
  */
 fun alignFileByWidth(inputName: String, outputName: String) {
     val text = mutableListOf<List<String>>()
-    val lenghtLines = mutableListOf<Int>()
+    val lengthyLines = mutableListOf<Int>()
     var maxLen = 0
     for (line in File(inputName).readLines()) {
         val res = line.trim().split(" ").filter { it != "" }
         var lenWords = res.fold(0) { preview, it -> preview + it.length }
         if (lenWords != 0) lenWords += (res.size - 1)
-        lenghtLines.add(lenWords)
+        lengthyLines.add(lenWords)
         maxLen = max(maxLen, lenWords)
         if (res.isEmpty()) text.add(listOf("")) else text.add(res)
     }
@@ -178,7 +178,7 @@ fun alignFileByWidth(inputName: String, outputName: String) {
                 it.write(line[0] + "\n")
                 continue
             }
-            val dif = maxLen - lenghtLines[index]
+            val dif = maxLen - lengthyLines[index]
             val countPosSpaces = line.size - 1
             val divSpaces = dif / countPosSpaces
             var modSpaces = dif % countPosSpaces
