@@ -205,7 +205,10 @@ fun hexagonByThreePoints(a: HexPoint, b: HexPoint, c: HexPoint): Hexagon? = TODO
  * Если множество содержит один гекс, вернуть шестиугольник нулевого радиуса с центром в данной точке.
  *
  * Пример: 13, 32, 45, 18 — шестиугольник радиусом 3 (с центром, например, в 15)
+ *
+ *
  */
+
 fun minContainingHexagon(vararg points: HexPoint): Hexagon = TODO()
 
 
