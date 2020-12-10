@@ -9,6 +9,10 @@ import kotlin.math.sin
 import kotlin.math.sqrt
 import kotlin.math.abs
 
+
+// Урок 8: простые классы
+// Максимальное количество баллов = 40 (без очень трудных задач = 11)
+
 /**
  * Точка на плоскости
  */
@@ -25,7 +29,7 @@ data class Point(val x: Double, val y: Double) {
  * Треугольник, заданный тремя точками (a, b, c, см. constructor ниже).
  * Эти три точки хранятся в множестве points, их порядок не имеет значения.
  */
-@Suppress("MemberVisibilityCanBePrivate")
+
 class Triangle private constructor(private val points: Set<Point>) {
 
     private val pointList = points.toList()
@@ -73,7 +77,7 @@ class Triangle private constructor(private val points: Set<Point>) {
  */
 data class Circle(val center: Point, val radius: Double) {
     /**
-     * Простая
+     * Простая (2 балла)
      *
      * Рассчитать расстояние между двумя окружностями.
      * Расстояние между непересекающимися окружностями рассчитывается как
@@ -86,12 +90,13 @@ data class Circle(val center: Point, val radius: Double) {
     }
 
     /**
-     * Тривиальная
+     * Тривиальная (1 балл)
      *
      * Вернуть true, если и только если окружность содержит данную точку НА себе или ВНУТРИ себя
      */
     fun contains(p: Point): Boolean = p.distance(center) - radius <= 1e-7
 }
+
 
 /**
  * Отрезок между двумя точками
@@ -105,7 +110,7 @@ data class Segment(val begin: Point, val end: Point) {
 }
 
 /**
- * Средняя
+ * Средняя (3 балла)
  *
  * Дано множество точек. Вернуть отрезок, соединяющий две наиболее удалённые из них.
  * Если в множестве менее двух точек, бросить IllegalArgumentException
@@ -126,7 +131,7 @@ fun diameter(vararg points: Point): Segment {
 }
 
 /**
- * Простая
+ * Простая (2 балла)
  *
  * Построить окружность по её диаметру, заданному двумя точками
  * Центр её должен находиться посередине между точками, а радиус составлять половину расстояния между ними
@@ -151,7 +156,7 @@ class Line private constructor(val b: Double, val angle: Double) {
     constructor(point: Point, angle: Double) : this(point.y * cos(angle) - point.x * sin(angle), angle)
 
     /**
-     * Средняя
+     * Средняя (3 балла)
      *
      * Найти точку пересечения с другой линией.
      * Для этого необходимо составить и решить систему из двух уравнений (каждое для своей прямой)
@@ -176,8 +181,9 @@ class Line private constructor(val b: Double, val angle: Double) {
     override fun toString() = "Line(${cos(angle)} * y = ${sin(angle)} * x + $b)"
 }
 
+
 /**
- * Средняя
+ * Средняя (3 балла)
  *
  * Построить прямую по отрезку
  */
@@ -187,14 +193,14 @@ fun angleByPoints(a: Point, b: Point): Double =
 fun lineBySegment(s: Segment): Line = Line(s.begin, angleByPoints(s.begin, s.end))
 
 /**
- * Средняя
+ * Средняя (3 балла)
  *
  * Построить прямую по двум точкам
  */
 fun lineByPoints(a: Point, b: Point): Line = lineBySegment(Segment(a, b))
 
 /**
- * Сложная
+ * Сложная (5 баллов)
  *
  * Построить серединный перпендикуляр по отрезку или по двум точкам
  */
@@ -202,9 +208,15 @@ fun bisectorByPoints(a: Point, b: Point): Line =
     Line(Point((a.x + b.x) / 2, (a.y + b.y) / 2), ((angleByPoints(a, b) + PI / 2) % PI))
 
 /**
- * Средняя
+ * Средняя (3 балла)
  *
- * Задан список из n окружностей на плоскости. Найти пару наименее удалённых из них.
+ * Задан список из n окружностей на плоскости.
+ * Найти пару наименее удалённых из них; расстояние между окружностями
+ * рассчитывать так, как указано в Circle.distance.
+ *
+ * При наличии нескольких наименее удалённых пар,
+ * вернуть первую из них по порядку в списке circles.
+ *
  * Если в списке менее двух окружностей, бросить IllegalArgumentException
  */
 fun findNearestCirclePair(vararg circles: Circle): Pair<Circle, Circle> {
@@ -224,7 +236,7 @@ fun findNearestCirclePair(vararg circles: Circle): Pair<Circle, Circle> {
 }
 
 /**
- * Сложная
+ * Сложная (5 баллов)
  *
  * Дано три различные точки. Построить окружность, проходящую через них
  * (все три точки должны лежать НА, а не ВНУТРИ, окружности).
@@ -239,7 +251,7 @@ fun circleByThreePoints(a: Point, b: Point, c: Point): Circle {
 }
 
 /**
- * Очень сложная
+ * Очень сложная (10 баллов)
  *
  * Дано множество точек на плоскости. Найти круг минимального радиуса,
  * содержащий все эти точки. Если множество пустое, бросить IllegalArgumentException.
