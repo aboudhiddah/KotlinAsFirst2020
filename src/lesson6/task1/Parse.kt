@@ -255,4 +255,53 @@ fun fromRoman(roman: String): Int {
  * IllegalArgumentException должен бросаться даже если ошибочная команда не была достигнута в ходе выполнения.
  *
  */
-fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> = TODO()
+fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
+    val setCorrectCommands = setOf('>', '<', '+', '-', '[', ']', ' ')
+    require((commands.toSet() - setCorrectCommands).isEmpty())
+    var k = 0
+    for (i in commands.indices) {
+        when (commands[i]) {
+            '[' -> k++
+            ']' -> k--
+        }
+        require(k >= 0)
+    }
+    require(k == 0)
+    var position = cells / 2
+    var countCommands = 0
+    var indexCommands = 0
+    val queueBrackets = mutableListOf<Int>()
+    val transporter = MutableList(cells) { 0 }
+    while ((countCommands < limit) && (indexCommands < commands.length)) {
+        when (commands[indexCommands]) {
+            '>' -> {
+                check(position != cells - 1)
+                position++
+            }
+            '<' -> {
+                check(position != 0)
+                position--
+            }
+            '+' -> transporter[position]++
+            '-' -> transporter[position]--
+            '[' -> {
+                var secondIndex = indexCommands + 1
+                var h = 0
+                while (secondIndex < commands.length) {
+                    if (commands[secondIndex] == '[') h++
+                    if (commands[secondIndex] == ']')
+                        if (h != 0) h--
+                        else break
+                    secondIndex++
+                }
+                if (transporter[position] == 0) indexCommands = secondIndex
+                else queueBrackets.add(indexCommands)
+            }
+            ']' -> if (transporter[position] != 0) indexCommands = queueBrackets.last()
+            else queueBrackets.removeAt(queueBrackets.size - 1)
+        }
+        countCommands++
+        indexCommands++
+    }
+    return transporter
+}
