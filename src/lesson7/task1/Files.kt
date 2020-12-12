@@ -331,9 +331,8 @@ Suspendisse <s>et elit in enim tempus iaculis</s>.
 
 
 fun markdownToHtmlSimple(inputName: String, outputName: String) {
-    val type =
-        File(inputName).readText().replace("\r", "")
-            .replace("\n \n", "\n\n").replace("\n\t\n", "\n\n").trim('\n')
+    val type = File(inputName).readLines().joinToString("\n") { if (it.isBlank()) "" else it }
+        .replace("\n \n", "\n\n").replace("\n\t\n", "\n\n").trim('\n')
     val textList = mutableListOf("<html><body>", "<p>")
     val kart = mutableMapOf("**" to null, "*" to null, "~~" to null, "\n\n" to 1)
     var indexOfBeginString = 0
