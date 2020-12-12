@@ -4,6 +4,9 @@ package lesson7.task1
 
 import java.io.File
 import kotlin.math.max
+import kotlin.math.pow
+import lesson3.task1.digitNumber
+
 
 // Урок 7: работа с файлами
 // Урок интегральный, поэтому его задачи имеют сильно увеличенную стоимость
@@ -542,7 +545,41 @@ fun printMultiplicationProcess(lhv: Int, rhv: Int, outputName: String) {
  * Используемые пробелы, отступы и дефисы должны в точности соответствовать примеру.
  *
  */
+
 fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
-    TODO()
+    File(outputName).bufferedWriter().use {
+        var div = "0"
+        var number = digitNumber(lhv)
+        while (div.toInt() < rhv && number != 0) {
+            number--
+            div = (lhv / 10.0.pow(number)).toInt().toString()
+        }
+        var res = " ".repeat(number + 3) + (lhv / rhv).toString()
+        var ind =
+            if (div.length == digitNumber(div.toInt() / rhv * rhv)) 1
+            else 0
+        it.write(" ".repeat(ind) + "$lhv | $rhv")
+        it.newLine()
+        while (number >= 0) {
+            val div2 = div.toInt() / rhv * rhv
+            it.write(" ".repeat(ind - 1 + div.length - digitNumber(div2)) + "-$div2$res")
+            it.newLine()
+            res = ""
+            it.write(
+                if (div.length > digitNumber(div2) + 1) " ".repeat(ind) + "-".repeat(div.length)
+                else " ".repeat(ind - 1 + div.length - digitNumber(div2)) +
+                        "-".repeat(digitNumber(div2) + 1)
+            )
+            it.newLine()
+            ind += div.length - digitNumber(div.toInt() - div2)
+            div =
+                if (number == 0) (div.toInt() - div2).toString()
+                else (div.toInt() - div2).toString() +
+                        (lhv % 10.0.pow(number).toInt() / 10.0.pow(number - 1).toInt()).toString()
+            it.write(" ".repeat(ind) + div)
+            it.newLine()
+            number--
+        }
+    }
 }
 

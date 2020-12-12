@@ -2,6 +2,8 @@
 
 package lesson8.task1
 
+import kotlin.math.abs
+
 /**
  * Точка (гекс) на шестиугольной сетке.
  * Координаты заданы как в примере (первая цифра - y, вторая цифра - x)
@@ -36,7 +38,12 @@ data class HexPoint(val x: Int, val y: Int) {
      * Расстояние вычисляется как число единичных отрезков в пути между двумя гексами.
      * Например, путь межу гексами 16 и 41 (см. выше) может проходить через 25, 34, 43 и 42 и имеет длину 5.
      */
-    fun distance(other: HexPoint): Int = TODO()
+    fun distance(other: HexPoint): Int =
+        if ((x - other.x < 0) && (y - other.y < 0) || (x - other.x > 0) && (y - other.y > 0))
+            abs(x - other.x) + abs(y - other.y)
+        else if (abs(x - other.x) > abs(y - other.y))
+            abs(x - other.x)
+        else abs(y - other.y)
 
     override fun toString(): String = "$y.$x"
 }
@@ -157,6 +164,7 @@ enum class Direction {
  * 35, direction = UP_LEFT, distance = 2 —> 53
  * 45, direction = DOWN_LEFT, distance = 4 —> 05
  */
+
 fun HexPoint.move(direction: Direction, distance: Int): HexPoint = TODO()
 
 /**
@@ -194,7 +202,32 @@ fun pathBetweenHexes(from: HexPoint, to: HexPoint): List<HexPoint> = TODO()
  *
  * Если все три точки совпадают, вернуть шестиугольник нулевого радиуса с центром в данной точке.
  */
-fun hexagonByThreePoints(a: HexPoint, b: HexPoint, c: HexPoint): Hexagon? = TODO()
+
+fun hexagonByThreePoints(a: HexPoint, b: HexPoint, c: HexPoint): Hexagon? {
+    val points = listOf(a, b, c)
+    val maxDis = maxOf(a.distance(b), a.distance(c), b.distance(c))
+    var minDis = maxDis
+    val dir1 = a.x - maxDis to a.y + maxDis
+    val dir2 = a.x + maxDis to a.y - maxDis
+    val poiDir = HexPoint(dir2.first, dir2.second)
+    var center = poiDir
+    for (i in dir2.second..dir1.second) {
+        var f = dir2.first
+        while (f != dir1.first) {
+            f--
+            val currentPoi = HexPoint(f, i)
+            val currentDis = a.distance(currentPoi)
+            if (currentDis <= minDis &&
+                points[1].distance(currentPoi) == currentDis &&
+                points[2].distance(currentPoi) == currentDis
+            ) {
+                center = currentPoi
+                minDis = currentDis
+            }
+        }
+    }
+    return if (center == poiDir) null else Hexagon(center, minDis)
+}
 
 /**
  * Очень сложная (20 баллов)
