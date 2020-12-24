@@ -105,4 +105,14 @@ class Tests {
         assertEquals(874, numberRevert(478))
         assertEquals(201, numberRevert(102))
     }
+
+    @Test
+    fun ticTacToe() {
+        assertEquals(true, ticTacToe("input/ticTacTest.txt", 'o'))
+        assertEquals(false, ticTacToe("input/ticTacTest2.txt", 'o'))
+        assertEquals(true, ticTacToe("input/ticTacTest.txt", 'x'))
+
+    }
 }
+
+

@@ -3,6 +3,8 @@
 package lesson1.task1
 
 import kotlin.math.*
+import java.io.File
+import java.lang.StringBuilder
 
 // Урок 1: простые функции
 // Максимальное количество баллов = 5
@@ -48,13 +50,6 @@ fun quadraticRootProduct(a: Double, b: Double, c: Double): Double {
     return x1 * x2 // Результат
 }
 
-/**
- * Пример главной функции
- */
-fun main() {
-    val x1x2 = quadraticRootProduct(1.0, 13.0, 42.0)
-    println("Root product: $x1x2")
-}
 
 /**
  * Тривиальная (3 балла).
@@ -131,4 +126,66 @@ fun accountInThreeYears(initial: Int, percent: Int): Double =
  * Необходимо вывести число, полученное из заданного перестановкой цифр в обратном порядке (например, 874).
  */
 fun numberRevert(number: Int): Int = (number % 10) * 100 + (number % 100 / 10) * 10 + (number / 100)
+
+
+/**Есть файл, в котором схематично изображено поле для игры в крестики-нолики на доске 15х15, а именно:
+ *- 15 строк
+ *- в каждой строке строго 15 символов
+ *- пустая клетка обозначается -, крестик х, нолик о
+ *
+
+ *Функция, которую нужно написать, принимает как параметры имя этого файла и знак (крестики или нолики).
+ * Необходимо определить, имеется ли на поле линия из 5 заданных знаков подряд (по вертикали, горизонтали или диагонали)
+ * вернуть true, если она есть, или false, если её нет.
+ *
+ * */
+
+fun ticTacToe(fileName: String, symbol: Char): Boolean {
+    val fileLines = File(fileName).readLines()
+    val winner = StringBuilder()
+    for (i in 0..4) {
+        winner.append(symbol)
+    }
+
+    for (range in fileLines) {
+        if (winner in range) {
+            return true
+        }
+        var nowString = StringBuilder()
+        for (index in 0..14) {
+            for (rangeF in fileLines) {
+                nowString.append(rangeF[index])
+            }
+            if (winner in nowString) return true
+            nowString = StringBuilder()
+        }
+        for (x in 0..10) {
+            for (y in 0..10) {
+                for (i in 0..4) {
+                    nowString.append(fileLines[x + i][y + i])
+                }
+                if (winner in nowString) return true
+                nowString = StringBuilder()
+            }
+        }
+        for (x in 4..14) {
+            for (y in 0..10) {
+                for (i in 0..4)
+                    nowString.append(fileLines[x - i][y + i])
+            }
+            if (winner in nowString) return true
+            nowString = StringBuilder()
+        }
+    }
+
+    return false
+
+}
+
+
+fun main() {
+    println(ticTacToe("input/ticTacTest.txt", 'o'))
+
+}
+
 
